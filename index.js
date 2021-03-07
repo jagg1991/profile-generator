@@ -9,6 +9,7 @@ const Manager = require("./lib/manager");
 const Intern = require("./lib/intern");
 const Engineer = require("./lib/engineer");
 
+//empty array for the employees 
 let employeeMembers = [];
 
 //function for user input
@@ -30,11 +31,7 @@ const userInput = () => {
                 name: "email",
                 message: "What is your employees email address?"
             },
-            // {
-            //     type: "number",
-            //     name: "office",
-            //     message: "What office number does your employee work for?"
-            // },
+
             {
                 type: 'list',
                 name: 'role',
@@ -42,40 +39,58 @@ const userInput = () => {
                 choices: ['Manager', 'Engineer', 'Intern'],
             },
 
-            // {
-            //     type: "list",
-            //     name: "continue",
-            //     message: "Would you like to add another employee?",
-            //     choices: ["Yes", "No"]
-            // }
+
 
         ])
 
-        .then((data) => {
-            const { name, id, email, role } = data
-            // const engineer = new Engineer(name, id, email, office, role)
-            // const manager = new Manager(name, id, email, office, role)
-            // const intern = new Intern(name, id, email, office, role)
+        .then((answer) => {
+            const { name, id, email, role } = answer;
 
-            // employeeMembers.push(engineer, manager, intern)
-            // console.log(name, id, email, office, role)
             switch (role) {
                 case "Manager":
                     inquirer.prompt({
                         type: "number",
                         name: "office",
-                        message: "What office number does your employee work for?"
+                        message: "What office number does your manager work for?"
                     })
                         .then((manager) => {
                             const { office } = manager;
+                            console.log(office);
                             const managerEmp = new Manager(name, id, email, office);
                             employeeMembers.push(managerEmp);
-                            console.log(employeeMembers);
+                            // console.log(employeeMembers);
                             userAsk();
                         })
 
                     break;
+                case "Engineer":
+                    inquirer.prompt({
+                        type: "input",
+                        name: "github",
+                        message: "What is you GitHub username?"
 
+                    })
+                        .then((data) => {
+                            const { github } = data;
+                            const engineerEmp = new Engineer(name, id, email, github);
+                            employeeMembers.push(engineerEmp);
+                            userAsk();
+                        })
+                    break;
+                case "Intern":
+                    inquirer.prompt({
+                        type: "input",
+                        name: "schoolName",
+                        message: "What school does your intern attend?"
+
+                    })
+                        .then((data) => {
+                            const { schoolName } = data;
+                            const internEmp = new Intern(name, id, email, schoolName);
+                            employeeMembers.push(internEmp);
+                            userAsk();
+                        })
+                    break;
                 default:
                     break;
             }
