@@ -30,40 +30,79 @@ const userInput = () => {
                 name: "email",
                 message: "What is your employees email address?"
             },
-            {
-                type: "number",
-                name: "office",
-                message: "What office number does your employee work for?"
-            },
+            // {
+            //     type: "number",
+            //     name: "office",
+            //     message: "What office number does your employee work for?"
+            // },
             {
                 type: 'list',
                 name: 'role',
                 message: 'What is the role of the employee?',
                 choices: ['Manager', 'Engineer', 'Intern'],
             },
-            {
-                type: "list",
-                name: "continue",
-                message: "Would you like to add another employee?",
-                choices: ["Yes", "No"]
-            }
+
+            // {
+            //     type: "list",
+            //     name: "continue",
+            //     message: "Would you like to add another employee?",
+            //     choices: ["Yes", "No"]
+            // }
 
         ])
 
         .then((data) => {
-            const name = data.name
-            const id = data.id
-            const email = data.email
-            const office = data.office
-            const role = data.role;
-            const engineer = new Engineer(name, id, email, office, role)
-            const manager = new Manager(name, id, email, office, role)
-            const intern = new Intern(name, id, email, office, role)
+            const { name, id, email, role } = data
+            // const engineer = new Engineer(name, id, email, office, role)
+            // const manager = new Manager(name, id, email, office, role)
+            // const intern = new Intern(name, id, email, office, role)
 
-            employeeMembers.push(engineer, manager, intern)
-            console.log(name, id, email, office, role)
+            // employeeMembers.push(engineer, manager, intern)
+            // console.log(name, id, email, office, role)
+            switch (role) {
+                case "Manager":
+                    inquirer.prompt({
+                        type: "number",
+                        name: "office",
+                        message: "What office number does your employee work for?"
+                    })
+                        .then((manager) => {
+                            const { office } = manager;
+                            const managerEmp = new Manager(name, id, email, office);
+                            employeeMembers.push(managerEmp);
+                            console.log(employeeMembers);
+                            userAsk();
+                        })
+
+                    break;
+
+                default:
+                    break;
+            }
 
         })
 }
 
+const userAsk = () => {
+    inquirer.prompt({
+
+        type: "list",
+        name: "continue",
+        message: "Would you like to add another employee?",
+        choices: ["Yes", "No"]
+
+    })
+        .then((answer) => {
+            if (answer.continue === 'Yes') {
+                userInput();
+            }
+            else {
+                console.log("generate HTML File");
+            }
+        })
+}
+
+
 userInput();
+
+
