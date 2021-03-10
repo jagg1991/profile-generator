@@ -30,3 +30,16 @@ const generateEmployee = (employee) => {
 
 
 }
+
+// switch (employee.getRole()) {
+//     case "Manager":
+//         employeeGenerate += `<li class="list-group-item">Office Number: ${employee.office}</li>`
+//         break;
+//     case "Intern":
+//         employeeGenerate += `<li class="list-group-item">Office Number: ${employee.schoolName}</li>`
+//         break;
+//     case "Engineer":
+//         employeeGenerate += `<li class="list-group-item">Office Number: ${employee.github}</li>`
+//     default:
+//         break;
+// }

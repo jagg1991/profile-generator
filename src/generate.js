@@ -1,4 +1,4 @@
-const generateMarkdown = (answer) =>
+const generateMarkdown = (answers) =>
     `
     <!DOCTYPE html>
     <html lang="en">

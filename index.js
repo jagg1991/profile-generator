@@ -8,9 +8,11 @@ const fs = require('fs');
 const Manager = require("./lib/manager");
 const Intern = require("./lib/intern");
 const Engineer = require("./lib/engineer");
+const employeesHTML = require('./src/generateEmployee');
 
 //empty array for the employees 
 let employeeMembers = [];
+let employeeList = [];
 
 //function for user input
 const userInput = () => {
@@ -43,8 +45,33 @@ const userInput = () => {
 
         ])
 
-        .then((answer) => {
-            const { name, id, email, role } = answer;
+        .then((answers) => {
+            const { name, id, email, role } = answers;
+            employeeList.push(answers)
+            console.log(employeeList)
+
+            let employeeAnswers = {
+                manCards: '',
+                engCards: '',
+                intCards: '',
+            };
+            for (let i = 0; i < employeeList.length; i++) {
+                let employees = employeesHTML
+                // string += employees;
+                switch (employeeList[i].role) {
+                    case 'Manager':
+                        employeeAnswers.manCards += employees;
+                        break;
+                    case 'Engineer':
+                        employeeAnswers.engCards += employees;
+                        break;
+                    case 'Intern':
+                        employeeAnswers.intCards += employees;
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             switch (role) {
                 case "Manager":
@@ -70,8 +97,8 @@ const userInput = () => {
                         message: "What is you GitHub username?"
 
                     })
-                        .then((data) => {
-                            const { github } = data;
+                        .then((userName) => {
+                            const { github } = userName;
                             const engineerEmp = new Engineer(name, id, email, github);
                             employeeMembers.push(engineerEmp);
                             userAsk();
@@ -84,18 +111,21 @@ const userInput = () => {
                         message: "What school does your intern attend?"
 
                     })
-                        .then((data) => {
-                            const { schoolName } = data;
+                        .then((attend) => {
+                            const { schoolName } = attend;
                             const internEmp = new Intern(name, id, email, schoolName);
-                            employeeMembers.push(internEmp);
                             userAsk();
+                            console.log(internEmp)
                         })
                     break;
                 default:
                     break;
+
             }
 
         })
+
+
 }
 
 const userAsk = () => {
@@ -112,6 +142,7 @@ const userAsk = () => {
                 userInput();
             }
             else {
+
                 console.log("generate HTML File");
             }
         })
