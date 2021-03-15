@@ -1,6 +1,7 @@
 // adding reqired  files for user input
 const inquirer = require('inquirer');
 const fs = require('fs');
+const util = require('util');
 // const generateMarkdown = require('generate.js')
 
 //importing object class
@@ -8,11 +9,12 @@ const fs = require('fs');
 const Manager = require("./lib/manager");
 const Intern = require("./lib/intern");
 const Engineer = require("./lib/engineer");
-const employeesHTML = require('./src/generateEmployee');
+const generateEmployee = require('./src/generateEmployee');
+const generateHTML = require('./src/generate')
 
 //empty array for the employees 
-let employeeMembers = [];
-let employeeList = [];
+const employeeMembers = [];
+
 
 //function for user input
 const userInput = () => {
@@ -47,31 +49,7 @@ const userInput = () => {
 
         .then((answers) => {
             const { name, id, email, role } = answers;
-            employeeList.push(answers)
-            console.log(employeeList)
 
-            let employeeAnswers = {
-                manCards: '',
-                engCards: '',
-                intCards: '',
-            };
-            for (let i = 0; i < employeeList.length; i++) {
-                let employees = employeesHTML
-                // string += employees;
-                switch (employeeList[i].role) {
-                    case 'Manager':
-                        employeeAnswers.manCards += employees;
-                        break;
-                    case 'Engineer':
-                        employeeAnswers.engCards += employees;
-                        break;
-                    case 'Intern':
-                        employeeAnswers.intCards += employees;
-                        break;
-                    default:
-                        break;
-                }
-            }
 
             switch (role) {
                 case "Manager":
@@ -80,12 +58,15 @@ const userInput = () => {
                         name: "office",
                         message: "What office number does your manager work for?"
                     })
+
+
+
                         .then((manager) => {
                             const { office } = manager;
-                            console.log(office);
+                            // console.log(office);
                             const managerEmp = new Manager(name, id, email, office);
                             employeeMembers.push(managerEmp);
-                            // console.log(employeeMembers);
+                            console.log(managerEmp)
                             userAsk();
                         })
 
@@ -114,8 +95,9 @@ const userInput = () => {
                         .then((attend) => {
                             const { schoolName } = attend;
                             const internEmp = new Intern(name, id, email, schoolName);
+                            employeeMembers.push(internEmp);
                             userAsk();
-                            console.log(internEmp)
+                            // console.log(internEmp)
                         })
                     break;
                 default:
@@ -142,13 +124,54 @@ const userAsk = () => {
                 userInput();
             }
             else {
-
+                getEmployee();
+                // init(answer)
                 console.log("generate HTML File");
             }
         })
 }
 
+const init = (employeeAnswers) => {
+
+    const writeHTML = util.promisify(fs.writeFile);
+    writeHTML(`index.html`, generateHTML(employeeAnswers))
+
+        .then(() => console.log('Successfully wrote index.html file!'))
+        .catch((err) => console.log(err));
+}
+
+
+
+const getEmployee = () => {
+    const employeeAnswers = {
+        manCards: '',
+        engCards: '',
+        intCards: '',
+    };
+    console.log(employeeMembers);
+    for (let i = 0; i < employeeMembers.length; i++) {
+        let employees = generateEmployee(employeeMembers[i]);
+
+
+        switch (employeeMembers[i].getRole()) {
+            case 'Manager':
+
+                employeeAnswers.manCards += employees;
+                break;
+            case 'Engineer':
+                employeeAnswers.engCards += employees;
+                break;
+            case 'Intern':
+                employeeAnswers.intCards += employees;
+                break;
+            default:
+                break;
+        }
+
+    }
+    console.log(employeeAnswers)
+    init(employeeAnswers);
+
+}
 
 userInput();
-
-
